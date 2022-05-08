@@ -30,9 +30,50 @@ let equationObject = {};
 const wrongFormat = [];
 
 // Time
+let timer
+let timePlayed = 0
+let baseTime = 0
+let penaltyTime = 0
+let finalTime = 0
+let finalTimeDisplay = "0.0s"
 
 // Scroll
 let valueY = 0
+
+// Stop Time, Process Results, go to Score Page 
+function checkTime() {
+  console.log("Time Played: ", timePlayed)
+  if(playGuessArray.length == questionAmount) {
+    console.log("Player guess array: ", playGuessArray)
+    clearInterval(timer)
+    // Check for wrong guesses, add penalty time
+    equationsArray.forEach((equation, index) => {
+      if (equation.evaluated === playGuessArray[index]) {
+        // Correct Guess, No Penalty
+      } else {
+        // Incorrect Guess, Add Penalty
+        penaltyTime += 0.5
+      }
+    })
+    finalTime = timePlayed + penaltyTime
+  }
+}
+
+// Add a tenth of a second to timePlayed
+function addTime() {
+  timePlayed += 0.1
+  checkTime() 
+}
+
+// Start time when game page is clicked
+function startTimer() {
+  // Reset times
+  timePlayed = 0
+  penaltyTime = 0
+  finalTime = 0
+  timer = setInterval(addTime, 100)
+  gamePage.removeEventListener("click", startTimer)
+}
 
 // Scroll, Store user selection in playerGuessArray
 function select(guessedTrue) {
@@ -60,9 +101,6 @@ function createEquations() {
   const correctEquations = getRandomInt(questionAmount)
   // Set amount of wrong equations
   const wrongEquations = questionAmount - correctEquations
-  console.log("Correct Equation ", correctEquations)
-  console.log("Wrong Equation ", wrongEquations)
-  console.log("Total Equation ", questionAmount)
   // Loop through, multiply random numbers up to 9, push to array
   for (let i = 0; i < correctEquations; i++) {
     firstNumber = getRandomInt(9)
@@ -164,7 +202,6 @@ function getRadioValue() {
 function selectQuestionAmount(e) {
   e.preventDefault()
   questionAmount = getRadioValue() 
-  console.log("Question amount: ", questionAmount)
   if (questionAmount)
     showCountdown()
 }
@@ -182,3 +219,4 @@ startForm.addEventListener("click", () => {
 
 // Event Listeners
 startForm.addEventListener("submit", selectQuestionAmount)
+gamePage.addEventListener("click", startTimer)
