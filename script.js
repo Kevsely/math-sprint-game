@@ -124,9 +124,7 @@ function scoresToDOM() {
 
 // Stop Time, Process Results, go to Score Page 
 function checkTime() {
-  console.log("Time Played: ", timePlayed)
   if(playGuessArray.length == questionAmount) {
-    console.log("Player guess array: ", playGuessArray)
     clearInterval(timer)
     // Check for wrong guesses, add penalty time
     equationsArray.forEach((equation, index) => {
